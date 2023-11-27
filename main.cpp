@@ -18,7 +18,7 @@ vector<string> parseInput(const string& line, char delimiter) {
     return parsedInput;
 }
 
-string determineMood(unordered_map<string, vector<string>> moodKeywords, vector<string> userInput) {
+string determineMood(unordered_map<string, vector<string>>& moodKeywords, vector<string> userInput) {
     int maxMatches = 0;
     string determinedMood;
 
@@ -43,13 +43,11 @@ string determineMood(unordered_map<string, vector<string>> moodKeywords, vector<
 
 }
 
-int main() {
+unordered_map<string, vector<string>> readMoodFile() {
     // read in the csv file and populate a map of moods and their associated keywords
     ifstream file("moods.csv");
-    // map: "mood", vector<"mood keywords"
     unordered_map<string, vector<string>> moodKeywords;
-
-
+    // map: "mood", vector<"mood keywords"
     string line;
     getline(file, line); // skip header
     while (getline(file, line)) {
@@ -61,8 +59,12 @@ int main() {
         moodKeywords[mood] = lineKeywords;
     }
     file.close();
+    return moodKeywords;
+}
 
+int main() {
     // get user input
+    unordered_map<string, vector<string>> moodKeywords = readMoodFile();
     // maybe a class for initializing the user playlist
     // Playlist MyPlaylist
 
