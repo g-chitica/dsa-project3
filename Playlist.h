@@ -17,7 +17,6 @@ public:
         this->favoriteGenre = user_genre;
     }
     void setfavoriteArtist(string user_artist) {
-        this->favoriteArtist = user_artist;
         searchArtist(user_artist);
     }
     void createPlaylist(string mood, int maxSongs);
@@ -26,16 +25,20 @@ public:
 };
 
 void Playlist::searchArtist(string user_artist) {
-    ///FIXME: SEARCH FOR ARTIST IN THE CSV FILE ARTIST COLUMN;
     bool artistFound = false;
-    if (artistFound == true) {
-        cout << "Artist successfully found in database\n";
-    }
-    else {
+    while (!artistFound) {
+        // SEARCH FOR ARTIST IN THE CSV FILE ARTIST COLUMN;
+        // if artist is found then artistFound = true
+        // cout << "Artist successfully found in database!"
+        // this->favoriteArtist = user_artist;
+        // then exit function
+
         cout << "Error: Artist not found in database. \n";
-        ///FIXME maybe a loop if artist not found but that might mean we have to take the searchArtist() funciton
-        ///to public to return a boolean
+        cout << "Please type another artist: \n";
+        string favoriteArtist;
+        getline(cin, favoriteArtist);
     }
+
 
 }
 
