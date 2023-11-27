@@ -104,7 +104,31 @@ int main() {
         }
     }
 
-    cout << MyPlaylist.getMood();
+    cout << "Choose from one of the following choices to help create your unique playlist!\n";
+    cout << "1. Choose favorite genre\n";
+    cout << "2. Choose favorite artist\n";
+    // maybe another option? we can decide later if it gets too complicated then maybe not
+    cout << "3. Exit Program\n";
+
+    string userOption;
+    getline(cin, userOption);
+
+    if (userOption == "1") {
+        cout << "What is your favorite genre?\n";
+        string favoriteGenre;
+        getline(cin, favoriteGenre);
+        MyPlaylist.setfavoriteGenre(favoriteGenre);
+    }
+    if (userOption == "2") {
+        cout << "Who is your favorite artist?\n";
+        string favoriteArtist;
+        getline(cin, favoriteArtist);
+        MyPlaylist.setfavoriteArtist(favoriteArtist);
+    }
+    if (userOption == "3") {
+        return 0;
+    }
+
     return 0;
 }
 
