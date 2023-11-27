@@ -73,17 +73,38 @@ int main() {
 
     cout << "Hello! This is a Mood Playlist Generator!\n";
     cout << "Let's begin!...\n";
-    cout << "Please describe in a sentence how you feel: \n";
 
-    string userInput;
-    getline(cin, userInput);
+    bool correctMood = false;
 
-    // read in the user input & determine mood based on keyword matches
-    vector<string> userWords = parseInput(userInput, ' ');
-    string determinedMood = determineMood(moodKeywords, userWords);
-    // output determined mood, might need error handling in case it doesnt work
-    cout << "We think your mood is... " << determinedMood << "...\n";
+    while (!correctMood) {
+        cout << "Please describe in a sentence how you feel: \n";
 
+        string userInput;
+        getline(cin, userInput);
+
+        // read in the user input & determine mood based on keyword matches
+        vector<string> userWords = parseInput(userInput, ' ');
+        string determinedMood = determineMood(moodKeywords, userWords);
+        // output determined mood, might need error handling in case it doesnt work
+        cout << "We think your mood is... " << determinedMood << "...\n";
+
+        MyPlaylist.setMood(determinedMood);
+
+        // ask the user if the determined mood is correct
+        string userResponse;
+        cout << "Is this mood correct? (yes/no): \n";
+        getline(cin, userResponse);
+
+        // check user response and update correctMood accordingly
+        if (userResponse == "yes" || userResponse == "Yes") {
+            correctMood = true;
+        } else {
+            correctMood = false;
+            cout << "Let's try again.\n";
+        }
+    }
+
+    cout << MyPlaylist.getMood();
     return 0;
 }
 
