@@ -68,10 +68,12 @@ int main() {
     // get user input
     unordered_map<string, vector<string>> moodKeywords = readMoodFile();
     // maybe a class for initializing the user playlist?
+
     Playlist MyPlaylist;
 
-    cout << "Hello! This is a Mood Playlist Generator\n" << endl;
-    cout << "Please describe in a sentence how you feel\n" << endl;
+    cout << "Hello! This is a Mood Playlist Generator!\n";
+    cout << "Let's begin!...\n";
+    cout << "Please describe in a sentence how you feel: \n";
 
     string userInput;
     getline(cin, userInput);
@@ -81,7 +83,8 @@ int main() {
     string determinedMood = determineMood(moodKeywords, userWords);
     // output determined mood, might need error handling in case it doesnt work
     cout << "We think your mood is... " << determinedMood << "...\n";
-    MyPlaylist.setMood(determinedMood);
 
     return 0;
 }
+
+
