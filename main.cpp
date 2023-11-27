@@ -115,9 +115,17 @@ int main() {
 
     if (userOption == "1") {
         cout << "What is your favorite genre?\n";
+        // options should be between rap/hip-hop, rock, pop, edm, international, instrumental, indie, country
+        cout << "1. Rap/Hip-Hop\n";
+        cout << "2. Rock\n";
+        cout << "3. Pop\n";
+        cout << "4. EDM\n";
+        cout << "5. International\n";
+        cout << "6. Instrumental\n";
+        cout << "7. Indie\n";
+        cout << "8. Country\n";
         string favoriteGenre;
         getline(cin, favoriteGenre);
-        MyPlaylist.setfavoriteGenre(favoriteGenre);
     }
     if (userOption == "2") {
         cout << "Who is your favorite artist?\n";
