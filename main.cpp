@@ -72,18 +72,14 @@ int main() {
 
     cout << "Hello! This is a Mood Playlist Generator\n" << endl;
     cout << "Please describe in a sentence how you feel\n" << endl;
-    // happy, sad/anxious, calm, mad, energetic/dance
-    // string mood;
-    // mood = based on the determineMood function
 
     string userInput;
     getline(cin, userInput);
 
-    // read in the user input
+    // read in the user input & determine mood based on keyword matches
     vector<string> userWords = parseInput(userInput, ' ');
-    // determine mood based on keyword matches
     string determinedMood = determineMood(moodKeywords, userWords);
-    // test output determined mood
+    // output determined mood, might need error handling in case it doesnt work
     cout << "We think your mood is... " << determinedMood << "...\n";
     MyPlaylist.setMood(determinedMood);
 
