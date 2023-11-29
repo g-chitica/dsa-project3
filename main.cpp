@@ -9,6 +9,7 @@
 using namespace std;
 
 // function to read in csv by its delimiters
+// citation: https://stackoverflow.com/questions/1120140/how-can-i-read-and-parse-csv-files-in-c
 vector<string> parseInput(const string& line, char delimiter) {
     vector<string> parsedInput;
     stringstream stream(line);
@@ -68,9 +69,10 @@ int main() {
     // get user input
     unordered_map<string, vector<string>> moodKeywords = readMoodFile();
     // maybe a class for initializing the user playlist?
-
+    cout << "Loading song database... Please wait up to 30 seconds to begin!\n";
     Playlist MyPlaylist;
-
+    cout << "Thank you for your patience...\n";
+    cout << endl;
     cout << "Hello! This is a Mood Playlist Generator!\n";
     cout << "Let's begin!...\n";
 
