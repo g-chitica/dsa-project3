@@ -117,15 +117,17 @@ int main() {
 
     if (userOption == "1") {
         cout << "What is your favorite genre?\n";
-        // options should be between rap/hip-hop, rock, pop, edm, international, instrumental, indie, country
-        cout << "1. Rap/Hip-Hop\n";
-        cout << "2. Rock\n";
-        cout << "3. Pop\n";
-        cout << "4. EDM\n";
-        cout << "5. International\n";
-        cout << "6. Instrumental\n";
-        cout << "7. Indie\n";
-        cout << "8. Country\n";
+        // options should be between these...
+        // most of the genres in the csv file can fall under these general genres.
+        cout << "1. Rap/Hip-Hop\n"; // inc. hip-hop
+        cout << "2. Rock\n"; // inc. alt-rock, black-metal, death-metal, emo, goth, hardcore, hard-rock, heavy-metal,
+        // metal, metalcore, psych-rock, punk, punk-rock, rock, rock-n-roll
+        cout << "3. Pop\n"; // inc. pop, pop-film, power-pop
+        cout << "4. EDM\n"; // inc. dance, disco, dub, dubstep, edm , electro, electronic, techno
+        cout << "5. International\n"; // inc. afrobeat, indian, k-pop, salsa, samba, spanish, swedish, french
+        cout << "6. Instrumental\n"; // inc. classical, opera, piano
+        cout << "7. Indie\n"; // inc. chill, indie-pop, garage
+        cout << "8. Country\n"; // inc. country
         string favoriteGenre;
         getline(cin, favoriteGenre);
     }
@@ -134,6 +136,10 @@ int main() {
         string favoriteArtist;
         getline(cin, favoriteArtist);
         MyPlaylist.setfavoriteArtist(favoriteArtist);
+        int num_songs;
+        cout << "How many songs would you like in your playlist?\n";
+        cin >> num_songs;
+        // create playlist!!
     }
     if (userOption == "3") {
         return 0;

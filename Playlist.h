@@ -21,8 +21,8 @@ class Playlist {
     string favoriteArtist;
     int maxSongs = 0;
     void searchArtist(string user_artist);
-    vector<Song> songDatabase;
-    vector<Song> userPlaylist;
+    vector<Song> songDatabase; // vector to store all the songs in the csv file as song objects.
+    vector<Song> userPlaylist; // vector to store only the user's playlist songs
 public:
     Playlist() {
         mood = "null";
@@ -76,7 +76,6 @@ public:
     void setfavoriteArtist(string user_artist) {
         searchArtist(user_artist);
     }
-    void createPlaylist(string mood, int maxSongs);
     void createPlaylistByArtist(string mood, int maxSongs, string artist);
     void createPlaylistByGenre(string mood, int maxSongs, string genre);
 };
