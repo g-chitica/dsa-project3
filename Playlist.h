@@ -57,7 +57,7 @@ public:
 
                     songDatabase.push_back(DBSong);
                 } catch (const invalid_argument& e) {
-                    // catch any exception that may occur due to invalid data in the csv file
+                    // catch any errors that may occur due to invalid data in the csv file
                 }
             }
         }
@@ -97,7 +97,7 @@ void Playlist::searchArtist(string user_artist) {
         this->favoriteArtist = user_artist;
     } else {
         // if not continue to search for a different artist!
-        cout << "Error: Artist" + user_artist + "was not found in the database.\n";
+        cout << "Error: Artist '" + user_artist + "' was not found in the database.\n";
         cout << "Please type another artist: \n";
         string newFavoriteArtist;
         getline(cin, newFavoriteArtist);
