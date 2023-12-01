@@ -76,8 +76,10 @@ public:
     void setfavoriteArtist(string user_artist) {
         searchArtist(user_artist);
     }
-    void createPlaylistByArtist(string mood, int maxSongs, string artist);
-    void createPlaylistByGenre(string mood, int maxSongs, string genre);
+    void createPlaylistByArtistAlg1(string mood, int maxSongs, string artist);
+    void createPlaylistByArtistAlg2(string mood, int maxSongs, string artist);
+    void createPlaylistByGenreAlg1(string mood, int maxSongs, string genre);
+    void createPlaylistByGenreAlg2(string mood, int maxSongs, string genre);
 };
 
 void Playlist::searchArtist(string user_artist) {
@@ -102,5 +104,26 @@ void Playlist::searchArtist(string user_artist) {
         getline(cin, newFavoriteArtist);
         setfavoriteArtist(newFavoriteArtist);
     }
+}
+
+// gabby
+void Playlist::createPlaylistByArtistAlg1(string mood, int maxSongs, string artist) {
+ // if user mood "sad"
+ // if  (danceability .01-.04) && artist = artist)
+ // weight on user artist
+ // if no songs found by that artist that fit criteria
+ // for maxSongs
+}
+
+void Playlist::createPlaylistByArtistAlg2(string mood, int maxSongs, string artist) {
+   // same thing as above but with algorithm 2
+}
+
+void Playlist::createPlaylistByGenreAlg1(string mood, int maxSongs, string genre) {
+    // search by genre
+}
+
+void Playlist::createPlaylistByGenreAlg2(string mood, int maxSongs, string genre) {
+   // same as above but with alg 2
 }
 

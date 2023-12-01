@@ -140,6 +140,7 @@ int main() {
         cout << "How many songs would you like in your playlist?\n";
         cin >> num_songs;
         // create playlist!!
+        // cout << "which algorithm to sort playlist: "
     }
     if (userOption == "3") {
         return 0;
