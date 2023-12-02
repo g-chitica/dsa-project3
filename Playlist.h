@@ -83,6 +83,7 @@ public:
 };
 
 void Playlist::searchArtist(string user_artist) {
+    cout << songDatabase.size() << endl;
     bool artistFound = false;
 
     for (Song &song : songDatabase) {
@@ -109,10 +110,27 @@ void Playlist::searchArtist(string user_artist) {
 // gabby
 void Playlist::createPlaylistByArtistAlg1(string mood, int maxSongs, string artist) {
  // if user mood "sad"
- // if  (danceability .01-.04) && artist = artist)
- // weight on user artist
- // if no songs found by that artist that fit criteria
- // for maxSongs
+ if (mood == "sad") {
+     for (int i = 0; i < maxSongs; i++) {
+         for (Song &song : songDatabase) {
+
+/*
+             search for the artist songs that fit criteria of:
+             Danceability: 0.2-0.6
+             Energy: 0.2-0.6
+             Loudness: -20.0 to -8.0
+             Mode: 0 (Minor)
+             Speechiness: 0.03-0.2
+             Instrumentalness: 0.4-0.9
+             Liveness: 0.1-0.3
+             Valence: 0.0-0.4
+             Tempo: 60-100 */
+             // if no songs found by that artist that fit criteria then just take off the criteria and add songs that do
+             // from the whole database
+             // userPlaylist.pushback(song);
+         }
+     }
+ }
 }
 
 void Playlist::createPlaylistByArtistAlg2(string mood, int maxSongs, string artist) {
