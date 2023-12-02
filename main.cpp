@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <unordered_set>
+#include <random>
 #include <vector>
 #include <unordered_map>
 #include <algorithm>
@@ -140,6 +142,7 @@ int main() {
         cout << "How many songs would you like in your playlist?\n";
         cin >> num_songs;
         // create playlist!!
+        MyPlaylist.createPlaylistByArtistAlg1(MyPlaylist.getMood(), num_songs, MyPlaylist.getfavoriteArtist());
         // cout << "which algorithm to sort playlist: "
     }
     if (userOption == "3") {
