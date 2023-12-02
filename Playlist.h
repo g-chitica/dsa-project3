@@ -21,6 +21,7 @@ class Playlist {
     string favoriteGenre;
     string favoriteArtist;
     int maxSongs = 0;
+    double numArtistSongs = 0;
     void searchArtist(string user_artist);
     vector<Song> songDatabase; // vector to store all the songs in the csv file as song objects.
     vector<Song> userPlaylist; // vector to store only the user's playlist songs
@@ -32,10 +33,6 @@ class Playlist {
     int partition(vector<Song>& songs, int low, int high);
 public:
     Playlist() {
-        mood = "null";
-        favoriteGenre = "null";
-        favoriteArtist = "null";
-        maxSongs = 0;
         // read the spotify_songs csv file and put them in the songDatabase
         ifstream file("spotify_data.csv");
         string line;
@@ -197,7 +194,6 @@ void Playlist::createPlaylistByArtistQuickSort(string mood, int maxSongs, string
     // check if the mood is "sad"
     if (mood == "sad") {
         // filter songs by the specified criteria
-        double numArtistSongs = 0;
         for (const Song& song : songDatabase) {
             if (song.artist == artist && (numArtistSongs / maxSongs <= 0.4) &&
                 song.dance_ability >= 0.2 && song.dance_ability <= 0.6 &&
