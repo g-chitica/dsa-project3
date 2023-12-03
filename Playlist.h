@@ -83,6 +83,10 @@ public:
     string getfavoriteArtist() {
         return this->favoriteArtist;
     }
+    string getfavoriteGenre() {
+        return this->favoriteGenre;
+    }
+    
     void createPlaylistByArtistQuickSort(string mood, int maxSongs, string artist);
     void createPlaylistByArtistAlg2(string mood, int maxSongs, string artist);
     void createPlaylistByGenreAlg1(string mood, int maxSongs, string genre);
@@ -274,8 +278,39 @@ void Playlist::createPlaylistByArtistAlg2(string mood, int maxSongs, string arti
    // same thing as above but with algorithm 2
 }
 
+//yujin
 void Playlist::createPlaylistByGenreAlg1(string mood, int maxSongs, string genre) {
     // search by genre
+    cout << "favoriteGenre " << favoriteGenre << endl;
+    cout << "max songs: " << maxSongs << endl;
+    cout << "songDatabase size: " << songDatabase.size() << endl;
+    this->maxSongs = maxSongs;
+    if(mood == "sad"){
+        if (favoriteGenre == "1"){
+            for (const Song& song : songDatabase){
+                if (song.dance_ability <= 0.2 && song.energy <= 0.2 &&
+                    song.loudness >= -20.0 && song.loudness <= -8.0 &&
+                    song.liveliness >= 0.0 && song.liveliness <= 0.3 &&
+                    song.valence >= 0.0 && song.valence <= 0.4 &&
+                    song.tempo >= 60 && song.tempo <= 100) {
+                    filteredSongs.push_back(song);
+                    uniqueSongs.insert(song.song_name);
+                    numArtistSongs++;
+                }
+            }
+        }
+        int current_size = this->filteredSongs.size();
+        cout << "Filtered Songs Size: " << current_size << endl;
+        quickSort(this->filteredSongs, 0, filteredSongs.size() - 1);
+        for (int i = 0; i < min(maxSongs, static_cast<int>(this->filteredSongs.size())); i++) {
+            userPlaylist.push_back(this->filteredSongs[i]);
+        }
+        cout << "User Playlist: " << endl;
+        for (const auto& song : userPlaylist) {
+            cout << song.song_name << " - " << song.artist << endl;
+        }
+        printPlaylist();
+    }
 }
 
 void Playlist::createPlaylistByGenreAlg2(string mood, int maxSongs, string genre) {
