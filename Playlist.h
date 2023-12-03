@@ -86,9 +86,9 @@ public:
     }
     
     void createPlaylistByArtistQuickSort(int maxSongs, string artist);
-    void createPlaylistByArtistAlg2(string mood, int maxSongs, string artist);
-    void createPlaylistByGenreAlg1(string mood, int maxSongs, string genre);
-    void createPlaylistByGenreAlg2(string mood, int maxSongs, string genre);
+    void createPlaylistByArtistMergeSort(string mood, int maxSongs, string artist);
+    void createPlaylistByGenreQuickSort(string mood, int maxSongs, string genre);
+    void createPlaylistByGenreMergeSort(string mood, int maxSongs, string genre);
 };
 
 void Playlist::searchArtist(string user_artist) {
@@ -256,12 +256,12 @@ void Playlist::createPlaylistByArtistQuickSort(int maxSongs, string artist) {
     printPlaylist();
 }
 
-void Playlist::createPlaylistByArtistAlg2(string mood, int maxSongs, string artist) {
+void Playlist::createPlaylistByArtistMergeSort(string mood, int maxSongs, string artist) {
    // same thing as above but with algorithm 2
 }
 
 //yujin
-void Playlist::createPlaylistByGenreAlg1(string mood, int maxSongs, string genre) {
+void Playlist::createPlaylistByGenreQuickSort(string mood, int maxSongs, string genre) {
     // search by genre
     cout << "favoriteGenre " << favoriteGenre << endl;
     cout << "max songs: " << maxSongs << endl;
@@ -295,7 +295,7 @@ void Playlist::createPlaylistByGenreAlg1(string mood, int maxSongs, string genre
     }
 }
 
-void Playlist::createPlaylistByGenreAlg2(string mood, int maxSongs, string genre) {
+void Playlist::createPlaylistByGenreMergeSort(string mood, int maxSongs, string genre) {
    // same as above but with alg 2
 }
 
