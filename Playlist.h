@@ -98,7 +98,6 @@ public:
         }
         if (genreNum == "2") {
             this->favoriteGenre = "Rock";
-            favoriteGenres.emplace_back("alt-rock");
             favoriteGenres.emplace_back("black-metal");
             favoriteGenres.emplace_back("emo");
             favoriteGenres.emplace_back("death-metal");
@@ -122,12 +121,8 @@ public:
         }
         if (genreNum == "4") {
             this->favoriteGenre = "EDM";
-            favoriteGenres.emplace_back("dance");
-            favoriteGenres.emplace_back("disco");
-            favoriteGenres.emplace_back("dub");
             favoriteGenres.emplace_back("dubstep");
             favoriteGenres.emplace_back("edm");
-            favoriteGenres.emplace_back("electro");
             favoriteGenres.emplace_back("electronic");
             favoriteGenres.emplace_back("techno");
 
@@ -151,6 +146,7 @@ public:
         }
         if (genreNum == "7") {
             this->favoriteGenre = "Indie";
+            favoriteGenres.emplace_back("alt-rock");
             favoriteGenres.emplace_back("chill");
             favoriteGenres.emplace_back("indie-pop");
             favoriteGenres.emplace_back("garage");
@@ -232,9 +228,9 @@ bool Playlist::compareSong(const Song& song1, const Song& song2) {
     }
     if (song1.popularity < song2.popularity) {
         // song with the highest popularity gets higher score
-        song2HitRate+=7;
+        song2HitRate+=10;
     } else {
-        song1HitRate+=7;
+        song1HitRate+=10;
     }
     if (song1.dance_ability < song2.dance_ability) {
         song2HitRate++;
@@ -370,7 +366,7 @@ void Playlist::createPlaylistByArtist(int maxSongs, string artist, int sortType)
             try {
                 if (uniqueSongs.find(song.song_name) == uniqueSongs.end() &&
                     song.artist != artist &&
-                    song.popularity >= filteredSongs[1].popularity &&
+                    song.popularity >= filteredSongs[0].popularity &&
                     song.dance_ability >= stdDanceAbility(lower) && song.dance_ability <= stdDanceAbility(upper) &&
                     song.energy >= stdEnergy(lower) && song.energy <= stdEnergy(upper) &&
                     song.loudness >= stdLoudness(lower)&& song.loudness <= stdLoudness(upper) &&
@@ -393,7 +389,7 @@ void Playlist::createPlaylistByArtist(int maxSongs, string artist, int sortType)
                     this->filteredSongs.push_back(song);
                     this->uniqueSongs.insert(song.song_name);
                 }
-                cout << "Number of filtered songs to sort: " <<  filteredSongs.size() << endl;
+                // cout << "Number of filtered songs to sort: " <<  filteredSongs.size() << endl;
                 if (sortType == 1) {
                     quickSort(this->filteredSongs, 0, filteredSongs.size() - 1);
                     for (int i = 0; i < min(maxSongs, static_cast<int>(this->filteredSongs.size())); i++) {
@@ -411,7 +407,7 @@ void Playlist::createPlaylistByArtist(int maxSongs, string artist, int sortType)
             }
         }
     }
-    cout << "Number of filtered songs to sort: " <<  filteredSongs.size() << endl;
+   // cout << "Number of filtered songs to sort: " <<  filteredSongs.size() << endl;
     // populate userPlaylist with the sorted songs up to maxSongs
     if (sortType == 1) {
         quickSort(this->filteredSongs, 0, filteredSongs.size() - 1);
@@ -486,7 +482,6 @@ void Playlist::createPlaylistByGenreMergeSort(int maxSongs) {
         }
     }
     int current_size = this->filteredSongs.size();
-    cout << "num filtered songs found: " << current_size << endl;
     // merge sort the filtered songs found
     mergeSort(this->filteredSongs, 0, current_size - 1);
     for (int i = 0; i < min(maxSongs, static_cast<int>(this->filteredSongs.size())); i++) {
