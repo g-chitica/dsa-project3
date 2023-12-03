@@ -226,6 +226,42 @@ void Playlist::createPlaylistByArtistQuickSort(string mood, int maxSongs, string
             }
         }
     }
+    if (mood == "happy") {
+        // filter songs by the specified criteria
+        for (const Song& song : songDatabase) {
+            if (song.artist == artist && (numArtistSongs / maxSongs <= 0.4) &&
+                song.dance_ability >= 0.5 && song.dance_ability <= 1.0 &&
+                song.energy >= 0.5 && song.energy <= 1.0 &&
+                song.loudness >= -8.0 && song.loudness <= -4.0 &&
+                song.liveliness >= 0.3 && song.liveliness <= 0.8 &&
+               // song.valence >= 0.5 && song.valence <= 1.0 &&
+                song.tempo >= 100 && song.tempo <= 200) {
+                filteredSongs.push_back(song);
+                uniqueSongs.insert(song.song_name);
+                numArtistSongs++;
+            }
+        }
+        int current_size = this->filteredSongs.size();
+        cout << current_size << endl;
+        // if no songs found, add songs without criteria from the whole database
+        if (filteredSongs.empty() || current_size != maxSongs) {
+            for (const Song& song : songDatabase) {
+                if (uniqueSongs.find(song.song_name) == uniqueSongs.end() &&
+                    song.artist != artist &&
+                    song.popularity >= filteredSongs[1].popularity &&
+                    song.dance_ability >= 0.5 && song.dance_ability <= 1.0 &&
+                    song.energy >= 0.5 && song.energy <= 1.0 &&
+                    song.loudness >= -8.0 && song.loudness <= -4.0 &&
+                    song.liveliness >= 0.3 && song.liveliness <= 0.8 &&
+                    // song.valence >= 0.5 && song.valence <= 1.0 &&
+                    song.tempo >= 120 && song.tempo <= 200) {
+                    this->filteredSongs.push_back(song);
+                    this->uniqueSongs.insert(song.song_name);
+                }
+            }
+        }
+
+    }
     quickSort(this->filteredSongs, 0, filteredSongs.size() - 1);
     // populate userPlaylist with the sorted songs up to maxSongs
     for (int i = 0; i < min(maxSongs, static_cast<int>(this->filteredSongs.size())); i++) {
