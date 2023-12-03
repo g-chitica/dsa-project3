@@ -1,5 +1,6 @@
 using namespace std;
 struct Song {
+    Song() {}
     string artist;
     string song_name;
     double popularity;
@@ -32,6 +33,8 @@ class Playlist {
     bool compareSong(const Song& song1, const Song& song2);
     void quickSort(vector<Song>& songs, int low, int high);
     int partition(vector<Song>& songs, int low, int high);
+    void merge(vector<Song>& songs, int low, int mid, int high);
+    void mergeSort(vector<Song>& songs, int low, int high);
     double stdDanceAbility(string lowerOrUpper);
     double stdEnergy(string lowerOrUpper);
     double stdLoudness(string lowerOrUpper);
@@ -41,6 +44,9 @@ class Playlist {
 
 public:
     Playlist() {
+        mood = "null";
+        favoriteArtist = "null";
+        favoriteGenre = "null";
         // read the spotify_songs csv file and put them in the songDatabase
         ifstream file("spotify_data.csv");
         string line;
@@ -158,7 +164,7 @@ public:
     void createPlaylistByArtistQuickSort(int maxSongs, string artist);
     void createPlaylistByArtistMergeSort(string mood, int maxSongs, string artist);
     void createPlaylistByGenreQuickSort(string mood, int maxSongs, string genre);
-    void createPlaylistByGenreMergeSort(int maxSongs, string genre);
+    void createPlaylistByGenreMergeSort(int maxSongs);
 };
 
 void Playlist::searchArtist(string user_artist) {
@@ -207,10 +213,18 @@ bool Playlist::compareSong(const Song& song1, const Song& song2) {
     int song1HitRate = 0;
     int song2HitRate = 0;
 
-    if (song1.artist == favoriteArtist && song2.artist != favoriteArtist) {
+    if (this->favoriteArtist != "null" && song1.artist == favoriteArtist && song2.artist != favoriteArtist) {
         // made artist comparisons weighted more!
         song1HitRate+=7;
     } else if (song1.artist != favoriteArtist && song2.artist == favoriteArtist) {
+        song2HitRate+=7;
+    }
+    if (this->favoriteGenre != "null" && find(favoriteGenres.begin(), favoriteGenres.end(), song1.genre)!= favoriteGenres.end()
+    && find(favoriteGenres.begin(), favoriteGenres.end(), song2.genre)== favoriteGenres.end() ) {
+        // made genre comparisons weighted more!
+        song1HitRate+=7;
+    } else if (find(favoriteGenres.begin(), favoriteGenres.end(), song1.genre)== favoriteGenres.end()
+    && find(favoriteGenres.begin(), favoriteGenres.end(), song2.genre)!= favoriteGenres.end() ) {
         song2HitRate+=7;
     }
     if (song1.popularity < song2.popularity) {
@@ -241,7 +255,7 @@ bool Playlist::compareSong(const Song& song1, const Song& song2) {
     if (song1.valence < song2.valence) {
         return song1.valence < song2.valence;
     }
-    return song1HitRate > song2HitRate;
+    return song1HitRate < song2HitRate;
 }
 
 // custom quicksort algorithm based on weighted factors
@@ -267,6 +281,64 @@ int Playlist::partition(vector<Song>& songs, int low, int high) {
     swap(songs[i + 1], songs[high]);
     return i + 1;
 }
+void Playlist::merge(vector<Song>& songs, int low, int mid, int high) {
+    int n1 = mid - low + 1;
+    int n2 = high - mid;
+
+    // create temp arrays w num of values of left or right halves
+    vector<Song> leftSongs(n1);
+    vector<Song> rightSongs(n2);
+
+    // copy data to temporary arrays leftSongs[] and rightSongs[]
+    for (int i = 0; i < n1; i++) {
+        leftSongs[i] = songs[low + i];
+    }
+    for (int j = 0; j < n2; j++) {
+        rightSongs[j] = songs[mid + 1 + j];
+    }
+
+    // merge the temporary arrays back into songs[low..high]
+    int i = 0;
+    int j = 0;
+    int k = low;
+
+    while (i < n1 && j < n2) {
+        if (compareSong(leftSongs[i], rightSongs[j])) {
+            songs[k] = leftSongs[i];
+            i++;
+        } else {
+            songs[k] = rightSongs[j];
+            j++;
+        }
+        k++;
+    }
+
+    while (i < n1) {
+        songs[k] = leftSongs[i];
+        i++;
+        k++;
+    }
+    while (j < n2) {
+        songs[k] = rightSongs[j];
+        j++;
+        k++;
+    }
+}
+
+// recursive function to perform merge sort
+void Playlist:: mergeSort(vector<Song>& songs, int low, int high) {
+    if (low < high) {
+        int mid = low + (high - low) / 2;
+
+        // recursively sort the first and second halves
+        mergeSort(songs, low, mid);
+        mergeSort(songs, mid + 1, high);
+
+        // merge the sorted halves
+        merge(songs, low, mid, high);
+    }
+}
+
 void Playlist::createPlaylistByArtistQuickSort(int maxSongs, string artist) {
     string lower = "lower";
     string upper = "upper";
@@ -372,9 +444,34 @@ void Playlist::createPlaylistByGenreQuickSort(string mood, int maxSongs, string 
     }
 }
 
-void Playlist::createPlaylistByGenreMergeSort(int maxSongs, string genre) {
+void Playlist::createPlaylistByGenreMergeSort(int maxSongs) {
+    string lower = "lower";
+    string upper = "upper";
     this->maxSongs = maxSongs;
    // same as above but with alg 2
+    for (const Song& song : songDatabase) {
+        if (find(favoriteGenres.begin(), favoriteGenres.end(), song.genre)!= favoriteGenres.end() &&
+            song.dance_ability >= stdDanceAbility(lower) && song.dance_ability <= stdDanceAbility(upper) &&
+            song.energy >= stdEnergy(lower) && song.energy <= stdEnergy(upper) &&
+            song.loudness >= stdLoudness(lower)&& song.loudness <= stdLoudness(upper) &&
+            song.liveliness >= stdLiveliness(lower) && song.liveliness <= stdLiveliness(upper) &&
+            song.valence >= stdValence(lower) && song.valence <= stdValence(upper) &&
+            song.tempo >= stdTempo(lower) && song.tempo <= stdTempo(upper)) {
+            filteredSongs.push_back(song);
+            uniqueSongs.insert(song.song_name);
+        }
+    }
+    int current_size = this->filteredSongs.size();
+    cout << "num filtered songs found: " << current_size << endl;
+    // merge sort the filtered songs found
+    mergeSort(this->filteredSongs, 0, current_size - 1);
+    for (int i = 0; i < min(maxSongs, static_cast<int>(this->filteredSongs.size())); i++) {
+        userPlaylist.push_back(this->filteredSongs[i]);
+    }
+
+    // print the sorted playlist
+    printPlaylist();
+
 }
 
 double Playlist::stdDanceAbility(string lowerOrUpper) {

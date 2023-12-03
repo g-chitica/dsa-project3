@@ -133,6 +133,10 @@ int main() {
         string favoriteGenre;
         getline(cin, favoriteGenre);
         MyPlaylist.setFavoriteGenre(favoriteGenre);
+        int num_songs;
+        cout << "How many songs would you like in your playlist?\n";
+        cin >> num_songs;
+        MyPlaylist.createPlaylistByGenreMergeSort(num_songs);
     }
     else if (userOption == "2") {
         cout << "Who is your favorite artist?\n";
