@@ -19,6 +19,7 @@ struct Song {
 class Playlist {
     string mood;
     string favoriteGenre;
+    vector<string> favoriteGenres;
     string favoriteArtist;
     int maxSongs = 0;
     double numArtistSongs = 0;
@@ -78,17 +79,86 @@ public:
     void setMood(string user_mood) {
         this->mood = user_mood;
     }
-    void setfavoriteArtist(string user_artist) {
+    void setFavoriteArtist(string user_artist) {
         searchArtist(user_artist);
     }
-    string getfavoriteArtist() {
+    string getFavoriteArtist() {
         return this->favoriteArtist;
     }
-    
+    void setFavoriteGenre(string genreNum) {
+        if (genreNum == "1") {
+            this->favoriteGenre = "Hip-Hop";
+            favoriteGenres.emplace_back("hip-hop");
+        }
+        if (genreNum == "2") {
+            this->favoriteGenre = "Rock";
+            favoriteGenres.emplace_back("alt-rock");
+            favoriteGenres.emplace_back("black-metal");
+            favoriteGenres.emplace_back("emo");
+            favoriteGenres.emplace_back("death-metal");
+            favoriteGenres.emplace_back("goth");
+            favoriteGenres.emplace_back("hardcore");
+            favoriteGenres.emplace_back("hard-rock");
+            favoriteGenres.emplace_back("heavy-metal");
+            favoriteGenres.emplace_back("metal");
+            favoriteGenres.emplace_back("metalcore");
+            favoriteGenres.emplace_back("pysch-rock");
+            favoriteGenres.emplace_back("punk");
+            favoriteGenres.emplace_back("punk-rock");
+            favoriteGenres.emplace_back("rock");
+            favoriteGenres.emplace_back("rock-n-roll");
+        }
+        if (genreNum == "3") {
+            this->favoriteGenre = "Pop";
+            favoriteGenres.emplace_back("pop");
+            favoriteGenres.emplace_back("pop-film");
+            favoriteGenres.emplace_back("power-pop");
+        }
+        if (genreNum == "4") {
+            this->favoriteGenre = "EDM";
+            favoriteGenres.emplace_back("dance");
+            favoriteGenres.emplace_back("disco");
+            favoriteGenres.emplace_back("dub");
+            favoriteGenres.emplace_back("dubstep");
+            favoriteGenres.emplace_back("edm");
+            favoriteGenres.emplace_back("electro");
+            favoriteGenres.emplace_back("electronic");
+            favoriteGenres.emplace_back("techno");
+
+        }
+        if (genreNum == "5") {
+            this->favoriteGenre = "International";
+            favoriteGenres.emplace_back("afrobeat");
+            favoriteGenres.emplace_back("indian");
+            favoriteGenres.emplace_back("k-pop");
+            favoriteGenres.emplace_back("salsa");
+            favoriteGenres.emplace_back("samba");
+            favoriteGenres.emplace_back("spanish");
+            favoriteGenres.emplace_back("swedish");
+            favoriteGenres.emplace_back("french");
+        }
+        if (genreNum == "6") {
+            this->favoriteGenre = "Instrumental";
+            favoriteGenres.emplace_back("classical");
+            favoriteGenres.emplace_back("opera");
+            favoriteGenres.emplace_back("piano");
+        }
+        if (genreNum == "7") {
+            this->favoriteGenre = "Indie";
+            favoriteGenres.emplace_back("chill");
+            favoriteGenres.emplace_back("indie-pop");
+            favoriteGenres.emplace_back("garage");
+        }
+        if (genreNum == "8") {
+            this->favoriteGenre = "Country";
+            favoriteGenres.emplace_back("country");
+        }
+
+    };
     void createPlaylistByArtistQuickSort(int maxSongs, string artist);
     void createPlaylistByArtistMergeSort(string mood, int maxSongs, string artist);
     void createPlaylistByGenreQuickSort(string mood, int maxSongs, string genre);
-    void createPlaylistByGenreMergeSort(string mood, int maxSongs, string genre);
+    void createPlaylistByGenreMergeSort(int maxSongs, string genre);
 };
 
 void Playlist::searchArtist(string user_artist) {
@@ -112,7 +182,7 @@ void Playlist::searchArtist(string user_artist) {
         cout << "Please type another artist: \n";
         string newFavoriteArtist;
         getline(cin, newFavoriteArtist);
-        setfavoriteArtist(newFavoriteArtist);
+        setFavoriteArtist(newFavoriteArtist);
     }
 }
 
@@ -139,9 +209,14 @@ bool Playlist::compareSong(const Song& song1, const Song& song2) {
 
     if (song1.artist == favoriteArtist && song2.artist != favoriteArtist) {
         // made artist comparisons weighted more!
-        song1HitRate+=5;
+        song1HitRate+=7;
     } else if (song1.artist != favoriteArtist && song2.artist == favoriteArtist) {
-        song2HitRate+=5;
+        song2HitRate+=7;
+    }
+    if (song1.popularity < song2.popularity) {
+        song2HitRate+=3;
+    } else {
+        song1HitRate+=3;
     }
     if (song1.dance_ability < song2.dance_ability) {
         song1HitRate++;
@@ -210,7 +285,7 @@ void Playlist::createPlaylistByArtistQuickSort(int maxSongs, string artist) {
         }
     }
     int current_size = this->filteredSongs.size();
-    cout << "filtered song size: " << current_size;
+    cout << "num artists songs found: " << numArtistSongs << endl;
     // if no songs found, add songs without artist criteria but fit mood from the whole database
     if (filteredSongs.empty() || current_size != maxSongs) {
         for (const Song& song : songDatabase) {
@@ -240,6 +315,7 @@ void Playlist::createPlaylistByArtistQuickSort(int maxSongs, string artist) {
                     this->filteredSongs.push_back(song);
                     this->uniqueSongs.insert(song.song_name);
                 }
+                cout << "Number of filtered songs to sort: " <<  filteredSongs.size() << endl;
                 quickSort(this->filteredSongs, 0, filteredSongs.size() - 1);
                 // populate userPlaylist with the sorted songs up to maxSongs
                 for (int i = 0; i < min(maxSongs, static_cast<int>(this->filteredSongs.size())); i++) {
@@ -248,6 +324,7 @@ void Playlist::createPlaylistByArtistQuickSort(int maxSongs, string artist) {
             }
         }
     }
+    cout << "Number of filtered songs to sort: " <<  filteredSongs.size() << endl;
     quickSort(this->filteredSongs, 0, filteredSongs.size() - 1);
     // populate userPlaylist with the sorted songs up to maxSongs
     for (int i = 0; i < min(maxSongs, static_cast<int>(this->filteredSongs.size())); i++) {
@@ -295,7 +372,8 @@ void Playlist::createPlaylistByGenreQuickSort(string mood, int maxSongs, string 
     }
 }
 
-void Playlist::createPlaylistByGenreMergeSort(string mood, int maxSongs, string genre) {
+void Playlist::createPlaylistByGenreMergeSort(int maxSongs, string genre) {
+    this->maxSongs = maxSongs;
    // same as above but with alg 2
 }
 

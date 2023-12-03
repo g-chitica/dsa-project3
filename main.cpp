@@ -132,20 +132,21 @@ int main() {
         cout << "8. Country\n"; // inc. country
         string favoriteGenre;
         getline(cin, favoriteGenre);
+        MyPlaylist.setFavoriteGenre(favoriteGenre);
     }
-    if (userOption == "2") {
+    else if (userOption == "2") {
         cout << "Who is your favorite artist?\n";
         string favoriteArtist;
         getline(cin, favoriteArtist);
-        MyPlaylist.setfavoriteArtist(favoriteArtist);
+        MyPlaylist.setFavoriteArtist(favoriteArtist);
         int num_songs;
         cout << "How many songs would you like in your playlist?\n";
         cin >> num_songs;
         // create playlist!!
-        MyPlaylist.createPlaylistByArtistQuickSort(num_songs, MyPlaylist.getfavoriteArtist());
+        MyPlaylist.createPlaylistByArtistQuickSort(num_songs, MyPlaylist.getFavoriteArtist());
         // cout << "which algorithm to sort playlist: "
     }
-    if (userOption == "3") {
+    else if (userOption == "3") {
         return 0;
     }
 
