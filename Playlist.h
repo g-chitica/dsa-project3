@@ -132,65 +132,66 @@ void Playlist::printPlaylist() {
         }
     }
 }
-bool Playlist::compareSong(const Song &song1, const Song &song2) {
+bool Playlist::compareSong(const Song& song1, const Song& song2) {
+    int song1HitRate = 0;
+    int song2HitRate = 0;
+
     if (song1.artist == favoriteArtist && song2.artist != favoriteArtist) {
         // song1 comes first because it's by the favorite artist
-        return true;
+        song1HitRate+=5;
     } else if (song1.artist != favoriteArtist && song2.artist == favoriteArtist) {
         // song2 comes first because it's by the favorite artist
-        return false;
+        song2HitRate+=5;
     }
-    if (song1.dance_ability != song2.dance_ability) {
-        return song1.dance_ability < song2.dance_ability;
+    if (song1.dance_ability < song2.dance_ability) {
+        song1HitRate++;
+    } else {
+        song2HitRate++;
     }
-    if (song1.energy != song2.energy) {
-        return song1.energy < song2.energy;
+    if (song1.energy < song2.energy) {
+        song1HitRate++;
+    } else {
+        song2HitRate++;
     }
-    if (song1.loudness != song2.loudness) {
-        return song1.loudness < song2.loudness;
+    if (song1.loudness < song2.loudness) {
+        song1HitRate++;
+    } else {
+        song2HitRate++;
     }
-    if (song1.liveliness != song2.liveliness) {
-        return song1.liveliness < song2.liveliness;
+    if (song1.liveliness < song2.liveliness) {
+        song1HitRate++;
+    } else {
+        song2HitRate++;
     }
-    if (song1.valence != song2.valence) {
+    if (song1.valence < song2.valence) {
         return song1.valence < song2.valence;
     }
-    return song1.tempo < song2.tempo;
+    return song1HitRate > song2HitRate;
 }
 
-// partition function for quicksort
-int Playlist::partition(vector<Song>& songs, int low, int high) {
-    Song pivot = songs[high];
-
-    // find the index of the pivot after rearranging the array
-    int i = low - 1;
-    for (int j = low; j < high; j++) {
-        if (compareSong(songs[j], pivot)) {
-            i++;
-            // swap songs[i] and songs[j]
-            swap(songs[i], songs[j]);
-        }
-    }
-
-    // swap songs[i + 1] and pivot
-    swap(songs[i + 1], songs[high]);
-
-    // return the index of the pivot
-    return i + 1;
-}
-
-// quicksort algorithm
+// Custom quicksort-like algorithm based on hit factors
 void Playlist::quickSort(vector<Song>& songs, int low, int high) {
     if (low < high) {
-        // partition the array and get the pivot index
         int pivotIndex = partition(songs, low, high);
-
-        // recursively sort the sub-arrays
         quickSort(songs, low, pivotIndex - 1);
         quickSort(songs, pivotIndex + 1, high);
     }
 }
 
+// Partition function for hit factor sorting
+int Playlist::partition(vector<Song>& songs, int low, int high) {
+    Song pivot = songs[high];
+    int i = low - 1;
+
+    for (int j = low; j < high; j++) {
+        if (compareSong(songs[j], pivot)) {
+            i++;
+            swap(songs[i], songs[j]);
+        }
+    }
+    swap(songs[i + 1], songs[high]);
+    return i + 1;
+}
 void Playlist::createPlaylistByArtistQuickSort(int maxSongs, string artist) {
     string lower = "lower";
     string upper = "upper";
