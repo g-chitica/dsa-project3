@@ -147,7 +147,12 @@ int main() {
         cout << "How many songs would you like in your playlist?\n";
         cin >> num_songs;
         // create playlist!!
-        MyPlaylist.createPlaylistByArtistQuickSort(num_songs, MyPlaylist.getFavoriteArtist());
+        cout << "Finally, which algorithm would you like to sort the playlist?:\n";
+        cout << "1. Quick Sort\n";
+        cout << "2. Merge Sort \n";
+        int sort_type;
+        cin >> sort_type;
+        MyPlaylist.createPlaylistByArtist(num_songs, MyPlaylist.getFavoriteArtist(), sort_type);
         // cout << "which algorithm to sort playlist: "
     }
     else if (userOption == "3") {

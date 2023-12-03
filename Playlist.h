@@ -161,7 +161,7 @@ public:
         }
 
     };
-    void createPlaylistByArtistQuickSort(int maxSongs, string artist);
+    void createPlaylistByArtist(int maxSongs, string artist, int sortType);
     void createPlaylistByArtistMergeSort(string mood, int maxSongs, string artist);
     void createPlaylistByGenreQuickSort(string mood, int maxSongs, string genre);
     void createPlaylistByGenreMergeSort(int maxSongs);
@@ -197,12 +197,15 @@ void Playlist::printPlaylist() {
     if (userPlaylist.empty()) {
         cout << "Your playlist is empty. Please start again with new criteria :(.\n";
     } else {
-        // shuffle the playlist order
-        random_device rd;
-        mt19937 g(rd());
-        shuffle(userPlaylist.begin(), userPlaylist.end(), g);
-
-        cout << "Here is your custom playlist:\n";
+        cout << "Out of " << songDatabase.size() << " songs...\n";
+        cout << "We've created this playlist just for you!\n";
+        if (this->favoriteArtist != "null") {
+            cout << this->favoriteArtist << " " << this->mood << " mix playlist: \n";
+        }
+        if (this->favoriteGenre != "null") {
+            cout << this->favoriteGenre << " " << this->mood << " mix playlist: \n";
+        }
+        cout << endl;
         for (int i = 0; i < min(static_cast<int>(userPlaylist.size()), this->maxSongs); i++) {
             cout << i + 1 << ". " << userPlaylist[i].song_name << " - " << userPlaylist[i].artist << "\n";
         }
@@ -215,47 +218,50 @@ bool Playlist::compareSong(const Song& song1, const Song& song2) {
 
     if (this->favoriteArtist != "null" && song1.artist == favoriteArtist && song2.artist != favoriteArtist) {
         // made artist comparisons weighted more!
-        song1HitRate+=7;
-    } else if (song1.artist != favoriteArtist && song2.artist == favoriteArtist) {
-        song2HitRate+=7;
+        song1HitRate+=20;
+    } else if (this->favoriteArtist != "null" && song1.artist != favoriteArtist && song2.artist == favoriteArtist) {
+        song2HitRate+=20;
     }
     if (this->favoriteGenre != "null" && find(favoriteGenres.begin(), favoriteGenres.end(), song1.genre)!= favoriteGenres.end()
     && find(favoriteGenres.begin(), favoriteGenres.end(), song2.genre)== favoriteGenres.end() ) {
         // made genre comparisons weighted more!
-        song1HitRate+=7;
-    } else if (find(favoriteGenres.begin(), favoriteGenres.end(), song1.genre)== favoriteGenres.end()
+        song1HitRate+=20;
+    } else if (this->favoriteGenre != "null" && find(favoriteGenres.begin(), favoriteGenres.end(), song1.genre)== favoriteGenres.end()
     && find(favoriteGenres.begin(), favoriteGenres.end(), song2.genre)!= favoriteGenres.end() ) {
-        song2HitRate+=7;
+        song2HitRate+=20;
     }
     if (song1.popularity < song2.popularity) {
-        song2HitRate+=3;
+        // song with the highest popularity gets higher score
+        song2HitRate+=7;
     } else {
-        song1HitRate+=3;
+        song1HitRate+=7;
     }
     if (song1.dance_ability < song2.dance_ability) {
-        song1HitRate++;
-    } else {
         song2HitRate++;
+    } else {
+        song1HitRate++;
     }
     if (song1.energy < song2.energy) {
-        song1HitRate++;
-    } else {
         song2HitRate++;
+    } else {
+        song1HitRate++;
     }
     if (song1.loudness < song2.loudness) {
-        song1HitRate++;
-    } else {
         song2HitRate++;
+    } else {
+        song1HitRate++;
     }
     if (song1.liveliness < song2.liveliness) {
-        song1HitRate++;
-    } else {
         song2HitRate++;
+    } else {
+        song1HitRate++;
     }
     if (song1.valence < song2.valence) {
-        return song1.valence < song2.valence;
+        song2HitRate++;
+    } else {
+        song1HitRate++;
     }
-    return song1HitRate < song2HitRate;
+    return song1HitRate > song2HitRate;
 }
 
 // custom quicksort algorithm based on weighted factors
@@ -339,7 +345,7 @@ void Playlist:: mergeSort(vector<Song>& songs, int low, int high) {
     }
 }
 
-void Playlist::createPlaylistByArtistQuickSort(int maxSongs, string artist) {
+void Playlist::createPlaylistByArtist(int maxSongs, string artist, int sortType) {
     string lower = "lower";
     string upper = "upper";
     this->maxSongs = maxSongs;
@@ -388,21 +394,39 @@ void Playlist::createPlaylistByArtistQuickSort(int maxSongs, string artist) {
                     this->uniqueSongs.insert(song.song_name);
                 }
                 cout << "Number of filtered songs to sort: " <<  filteredSongs.size() << endl;
-                quickSort(this->filteredSongs, 0, filteredSongs.size() - 1);
-                // populate userPlaylist with the sorted songs up to maxSongs
-                for (int i = 0; i < min(maxSongs, static_cast<int>(this->filteredSongs.size())); i++) {
-                    userPlaylist.push_back(this->filteredSongs[i]);
+                if (sortType == 1) {
+                    quickSort(this->filteredSongs, 0, filteredSongs.size() - 1);
+                    for (int i = 0; i < min(maxSongs, static_cast<int>(this->filteredSongs.size())); i++) {
+                        userPlaylist.push_back(this->filteredSongs[i]);
+                    }
+                    printPlaylist();
+                }
+                else if (sortType == 2) {
+                    mergeSort(this->filteredSongs, 0, filteredSongs.size() - 1);
+                    for (int i = 0; i < min(maxSongs, static_cast<int>(this->filteredSongs.size())); i++) {
+                        userPlaylist.push_back(this->filteredSongs[i]);
+                    }
+                    printPlaylist();
                 }
             }
         }
     }
     cout << "Number of filtered songs to sort: " <<  filteredSongs.size() << endl;
-    quickSort(this->filteredSongs, 0, filteredSongs.size() - 1);
     // populate userPlaylist with the sorted songs up to maxSongs
-    for (int i = 0; i < min(maxSongs, static_cast<int>(this->filteredSongs.size())); i++) {
-        userPlaylist.push_back(this->filteredSongs[i]);
+    if (sortType == 1) {
+        quickSort(this->filteredSongs, 0, filteredSongs.size() - 1);
+        for (int i = 0; i < min(maxSongs, static_cast<int>(this->filteredSongs.size())); i++) {
+            userPlaylist.push_back(this->filteredSongs[i]);
+        }
+        printPlaylist();
     }
-    printPlaylist();
+    else if (sortType == 2) {
+        mergeSort(this->filteredSongs, 0, filteredSongs.size() - 1);
+        for (int i = 0; i < min(maxSongs, static_cast<int>(this->filteredSongs.size())); i++) {
+            userPlaylist.push_back(this->filteredSongs[i]);
+        }
+        printPlaylist();
+    }
 }
 
 void Playlist::createPlaylistByArtistMergeSort(string mood, int maxSongs, string artist) {
