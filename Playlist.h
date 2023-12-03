@@ -31,6 +31,13 @@ class Playlist {
     bool compareSong(const Song& song1, const Song& song2);
     void quickSort(vector<Song>& songs, int low, int high);
     int partition(vector<Song>& songs, int low, int high);
+    double stdDanceAbility(string lowerOrUpper);
+    double stdEnergy(string lowerOrUpper);
+    double stdLoudness(string lowerOrUpper);
+    double stdLiveliness(string lowerOrUpper);
+    double stdValence(string lowerOrUpper);
+    double stdTempo(string lowerOrUpper);
+
 public:
     Playlist() {
         // read the spotify_songs csv file and put them in the songDatabase
@@ -68,14 +75,8 @@ public:
 
         file.close();
     }
-    string getMood() {
-        return this->mood;
-    }
     void setMood(string user_mood) {
         this->mood = user_mood;
-    }
-    void setfavoriteGenre(string user_genre){
-        this->favoriteGenre = user_genre;
     }
     void setfavoriteArtist(string user_artist) {
         searchArtist(user_artist);
@@ -83,11 +84,8 @@ public:
     string getfavoriteArtist() {
         return this->favoriteArtist;
     }
-    string getfavoriteGenre() {
-        return this->favoriteGenre;
-    }
     
-    void createPlaylistByArtistQuickSort(string mood, int maxSongs, string artist);
+    void createPlaylistByArtistQuickSort(int maxSongs, string artist);
     void createPlaylistByArtistAlg2(string mood, int maxSongs, string artist);
     void createPlaylistByGenreAlg1(string mood, int maxSongs, string genre);
     void createPlaylistByGenreAlg2(string mood, int maxSongs, string genre);
@@ -193,78 +191,61 @@ void Playlist::quickSort(vector<Song>& songs, int low, int high) {
     }
 }
 
-void Playlist::createPlaylistByArtistQuickSort(string mood, int maxSongs, string artist) {
+void Playlist::createPlaylistByArtistQuickSort(int maxSongs, string artist) {
+    string lower = "lower";
+    string upper = "upper";
     this->maxSongs = maxSongs;
-    // check if the mood is "sad"
-    if (mood == "sad") {
-        // filter songs by the specified criteria
-        for (const Song& song : songDatabase) {
-            if (song.artist == artist && (numArtistSongs / maxSongs <= 0.4) &&
-                song.dance_ability >= 0.2 && song.dance_ability <= 0.6 &&
-                song.energy >= 0.2 && song.energy <= 0.6 &&
-                song.loudness >= -20.0 && song.loudness <= -8.0 &&
-                song.liveliness >= 0.1 && song.liveliness <= 0.3 &&
-                song.valence >= 0.0 && song.valence <= 0.4 &&
-                song.tempo >= 60 && song.tempo <= 100) {
-                filteredSongs.push_back(song);
-                uniqueSongs.insert(song.song_name);
-                numArtistSongs++;
-            }
-        }
-        int current_size = this->filteredSongs.size();
-        // if no songs found, add songs without criteria from the whole database
-        if (filteredSongs.empty() || current_size != maxSongs) {
-            for (const Song& song : songDatabase) {
-                if (uniqueSongs.find(song.song_name) == uniqueSongs.end() &&
-                    song.artist != artist &&
-                    song.popularity >= filteredSongs[1].popularity &&
-                    song.dance_ability >= 0.2 && song.dance_ability <= 0.6 &&
-                    song.energy >= 0.1 && song.energy <= 0.6 &&
-                    song.loudness >= -30.0 && song.loudness <= -8.0 &&
-                    song.liveliness >= 0.1 && song.liveliness <= 0.3 &&
-                    song.valence >= 0.0 && song.valence <= 0.4 &&
-                    song.tempo >= 60 && song.tempo <= 100) {
-                    this->filteredSongs.push_back(song);
-                    this->uniqueSongs.insert(song.song_name);
-                }
-            }
+    for (const Song& song : songDatabase) {
+        if (song.artist == artist && (numArtistSongs / maxSongs <= 0.4) &&
+            song.dance_ability >= stdDanceAbility(lower) && song.dance_ability <= stdDanceAbility(upper) &&
+            song.energy >= stdEnergy(lower) && song.energy <= stdEnergy(upper) &&
+            song.loudness >= stdLoudness(lower)&& song.loudness <= stdLoudness(upper) &&
+            song.liveliness >= stdLiveliness(lower) && song.liveliness <= stdLiveliness(upper) &&
+            song.valence >= stdValence(lower) && song.valence <= stdValence(upper) &&
+            song.tempo >= stdTempo(lower) && song.tempo <= stdTempo(upper)) {
+            filteredSongs.push_back(song);
+            uniqueSongs.insert(song.song_name);
+            numArtistSongs++;
         }
     }
-    if (mood == "happy") {
-        // filter songs by the specified criteria
+    int current_size = this->filteredSongs.size();
+    cout << "filtered song size: " << current_size;
+    // if no songs found, add songs without artist criteria but fit mood from the whole database
+    if (filteredSongs.empty() || current_size != maxSongs) {
         for (const Song& song : songDatabase) {
-            if (song.artist == artist && (numArtistSongs / maxSongs <= 0.4) &&
-                song.dance_ability >= 0.5 && song.dance_ability <= 1.0 &&
-                song.energy >= 0.5 && song.energy <= 1.0 &&
-                song.loudness >= -8.0 && song.loudness <= -4.0 &&
-                song.liveliness >= 0.3 && song.liveliness <= 0.8 &&
-               // song.valence >= 0.5 && song.valence <= 1.0 &&
-                song.tempo >= 100 && song.tempo <= 200) {
-                filteredSongs.push_back(song);
-                uniqueSongs.insert(song.song_name);
-                numArtistSongs++;
-            }
-        }
-        int current_size = this->filteredSongs.size();
-        cout << current_size << endl;
-        // if no songs found, add songs without criteria from the whole database
-        if (filteredSongs.empty() || current_size != maxSongs) {
-            for (const Song& song : songDatabase) {
+            try {
                 if (uniqueSongs.find(song.song_name) == uniqueSongs.end() &&
                     song.artist != artist &&
                     song.popularity >= filteredSongs[1].popularity &&
-                    song.dance_ability >= 0.5 && song.dance_ability <= 1.0 &&
-                    song.energy >= 0.5 && song.energy <= 1.0 &&
-                    song.loudness >= -8.0 && song.loudness <= -4.0 &&
-                    song.liveliness >= 0.3 && song.liveliness <= 0.8 &&
-                    // song.valence >= 0.5 && song.valence <= 1.0 &&
-                    song.tempo >= 120 && song.tempo <= 200) {
+                    song.dance_ability >= stdDanceAbility(lower) && song.dance_ability <= stdDanceAbility(upper) &&
+                    song.energy >= stdEnergy(lower) && song.energy <= stdEnergy(upper) &&
+                    song.loudness >= stdLoudness(lower)&& song.loudness <= stdLoudness(upper) &&
+                    song.liveliness >= stdLiveliness(lower) && song.liveliness <= stdLiveliness(upper) &&
+                    song.valence >= stdValence(lower) && song.valence <= stdValence(upper) &&
+                    song.tempo >= stdTempo(lower) && song.tempo <= stdTempo(upper)) {
                     this->filteredSongs.push_back(song);
                     this->uniqueSongs.insert(song.song_name);
                 }
             }
+            catch (const invalid_argument& e) {
+                if (uniqueSongs.find(song.song_name) == uniqueSongs.end() &&
+                    song.artist != artist &&
+                    song.dance_ability >= stdDanceAbility(lower) && song.dance_ability <= stdDanceAbility(upper) &&
+                    song.energy >= stdEnergy(lower) && song.energy <= stdEnergy(upper) &&
+                    song.loudness >= stdLoudness(lower)&& song.loudness <= stdLoudness(upper) &&
+                    song.liveliness >= stdLiveliness(lower) && song.liveliness <= stdLiveliness(upper) &&
+                    song.valence >= stdValence(lower) && song.valence <= stdValence(upper) &&
+                    song.tempo >= stdTempo(lower) && song.tempo <= stdTempo(upper)) {
+                    this->filteredSongs.push_back(song);
+                    this->uniqueSongs.insert(song.song_name);
+                }
+                quickSort(this->filteredSongs, 0, filteredSongs.size() - 1);
+                // populate userPlaylist with the sorted songs up to maxSongs
+                for (int i = 0; i < min(maxSongs, static_cast<int>(this->filteredSongs.size())); i++) {
+                    userPlaylist.push_back(this->filteredSongs[i]);
+                }
+            }
         }
-
     }
     quickSort(this->filteredSongs, 0, filteredSongs.size() - 1);
     // populate userPlaylist with the sorted songs up to maxSongs
@@ -315,5 +296,134 @@ void Playlist::createPlaylistByGenreAlg1(string mood, int maxSongs, string genre
 
 void Playlist::createPlaylistByGenreAlg2(string mood, int maxSongs, string genre) {
    // same as above but with alg 2
+}
+
+double Playlist::stdDanceAbility(string lowerOrUpper) {
+    if (this->mood == "sad") {
+        if (lowerOrUpper == "lower") return 0.2;
+        else { return 0.6; }
+    }
+    if (this->mood == "happy") {
+        if (lowerOrUpper == "lower") { return 0.5;}
+        else { return 1.0;}
+    }
+    if (this->mood == "calm"){
+        if (lowerOrUpper == "lower") return 0.0;
+        else {return 0.5;}
+    }
+    if (this->mood == "mad") {
+
+    }
+    if (this->mood == "energetic"){
+
+    }
+}
+
+double Playlist::stdEnergy(string lowerOrUpper) {
+    if (this->mood == "sad") {
+        if (lowerOrUpper == "lower") return 0.2;
+        else { return 0.6; }
+    }
+    if (this->mood == "happy") {
+        if (lowerOrUpper == "lower") { return 0.5;}
+        else { return 1.0;}
+    }
+    if (this->mood == "calm"){
+        if (lowerOrUpper == "lower") {return 0.3;}
+        else {return 0.7;}
+    }
+    if (this->mood == "mad") {
+
+    }
+    if (this->mood == "energetic"){
+
+    }
+}
+
+double Playlist::stdLoudness(string lowerOrUpper) {
+    if (this->mood == "sad") {
+        if (lowerOrUpper == "lower") return -20.0;
+        else { return -8.0; }
+    }
+    if (this->mood == "happy") {
+        if (lowerOrUpper == "lower") { return -8.0;}
+        else { return -4.0; }
+    }
+    if (this->mood == "calm"){
+        if (lowerOrUpper == "lower") return -15.0;
+        else {return -6.0;}
+    }
+    if (this->mood == "mad") {
+
+    }
+    if (this->mood == "energetic"){
+
+    }
+}
+
+double Playlist::stdLiveliness(string lowerOrUpper) {
+    if (this->mood == "sad") {
+        if (lowerOrUpper == "lower") return 0.1;
+        else {return 0.3;}
+    }
+    if (this->mood == "happy") {
+        if (lowerOrUpper == "lower") {return 0.3;}
+        else {return 0.8;}
+    }
+    if (this->mood == "calm"){
+        if (lowerOrUpper == "lower") {return 0.0;}
+        else {return 0.4;}
+
+    }
+    if (this->mood == "mad") {
+
+    }
+    if (this->mood == "energetic"){
+
+    }
+    return 0;
+}
+
+double Playlist::stdValence(string lowerOrUpper) {
+    if (this->mood == "sad") {
+        if (lowerOrUpper == "lower") return 0.0;
+        else {return 0.4;}
+    }
+    if (this->mood == "happy") {
+        if (lowerOrUpper == "lower") { return 0.5;}
+        else {return 1.0;}
+    }
+    if (this->mood == "calm"){
+        if (lowerOrUpper == "lower") return 0.2;
+        else {return 0.6;}
+    }
+    if (this->mood == "mad") {
+
+    }
+    if (this->mood == "energetic"){
+
+    }
+}
+
+double Playlist::stdTempo(string lowerOrUpper) {
+    if (this->mood == "sad") {
+        if (lowerOrUpper == "lower") return 50.0;
+        else {return 100.0;}
+    }
+    if (this->mood == "happy") {
+        if (lowerOrUpper == "lower") { return 100.0;}
+        else {return 200.0;}
+    }
+    if (this->mood == "calm"){
+        if (lowerOrUpper == "lower") {return 60.0;}
+        else {return 100.0;}
+    }
+    if (this->mood == "mad") {
+
+    }
+    if (this->mood == "energetic"){
+
+    }
+    return 0;
 }
 
