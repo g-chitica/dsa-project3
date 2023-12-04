@@ -92,6 +92,7 @@ int main() {
         vector<string> userWords = parseInput(userInput, ' ');
         string determinedMood = determineMood(moodKeywords, userWords);
 
+        // output determined mood, might need error handling in case it doesnt work
         if (!determinedMood.empty()) {
             cout << "We think your mood is... " << determinedMood << "...\n";
             MyPlaylist.setMood(determinedMood);
