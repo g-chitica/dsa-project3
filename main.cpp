@@ -91,10 +91,30 @@ int main() {
         // read in the user input & determine mood based on keyword matches
         vector<string> userWords = parseInput(userInput, ' ');
         string determinedMood = determineMood(moodKeywords, userWords);
-        // output determined mood, might need error handling in case it doesnt work
-        cout << "We think your mood is... " << determinedMood << "...\n";
 
-        MyPlaylist.setMood(determinedMood);
+        if (!determinedMood.empty()) {
+            cout << "We think your mood is... " << determinedMood << "...\n";
+            MyPlaylist.setMood(determinedMood);
+        }
+
+        // if user did not provide vaild input, then reprompt user for input until it's vaild
+        do {
+            if (determinedMood.empty()) {
+                cout << "We didn't catch that, please try again. \n";
+
+                string userInputRedo;
+                getline(cin, userInputRedo);
+
+                vector<string> userWordsRedo = parseInput(userInputRedo, ' ');
+                determinedMood = determineMood(moodKeywords, userWordsRedo);
+
+                if (!determinedMood.empty()) {
+                    cout << "We think your mood is... " << determinedMood << "...\n";
+                    MyPlaylist.setMood(determinedMood);
+                }
+            }
+        } while (determinedMood.empty());
+
 
         // ask the user if the determined mood is correct
         string userResponse;
@@ -108,6 +128,7 @@ int main() {
             correctMood = false;
             cout << "Let's try again.\n";
         }
+
     }
 
     cout << "Choose from one of the following choices to help create your unique playlist!\n";
@@ -143,6 +164,13 @@ int main() {
         cout << "2. Merge Sort \n";
         int sort_type;
         cin >> sort_type;
+
+        // if user enter invaild input of the options, prompt them to reenter input
+        if (sort_type != 1 && sort_type != 2) {
+            cout << "We did not catch that, please reenter \n";
+            cin >> sort_type;
+        }
+
         MyPlaylist.createPlaylistByGenre(num_songs, sort_type);
     }
     else if (userOption == "2") {
@@ -159,6 +187,13 @@ int main() {
         cout << "2. Merge Sort \n";
         int sort_type;
         cin >> sort_type;
+
+        // if user enter invaild input of the options, prompt them to reenter input
+        if (sort_type != 1 && sort_type != 2) {
+            cout << "We did not catch that, please reenter \n";
+            cin >> sort_type;
+        }
+
         MyPlaylist.createPlaylistByArtist(num_songs, MyPlaylist.getFavoriteArtist(), sort_type);
     }
     else if (userOption == "3") {

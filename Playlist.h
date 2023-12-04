@@ -163,7 +163,7 @@ public:
 };
 
 void Playlist::searchArtist(string user_artist) {
-    cout << songDatabase.size() << endl;
+    //  cout << songDatabase.size() << endl; commented out this line of code because the # of artist is not need yet
     bool artistFound = false;
 
     for (Song &song : songDatabase) {
