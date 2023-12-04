@@ -63,7 +63,7 @@ public:
             }
 
             // ensure that there are enough columns in the line
-            if (parsedInput.size() >= 20) {
+            if (parsedInput.size() == 20) {
                 try {
                     // create a Song object and add it to the songDatabase
                     // make sure case matches though:
