@@ -1,4 +1,5 @@
 using namespace std;
+using namespace std::chrono;
 struct Song {
     Song() {}
     string artist;
@@ -158,9 +159,7 @@ public:
 
     };
     void createPlaylistByArtist(int maxSongs, string artist, int sortType);
-    void createPlaylistByArtistMergeSort(string mood, int maxSongs, string artist);
-    void createPlaylistByGenreQuickSort(string mood, int maxSongs, string genre);
-    void createPlaylistByGenreMergeSort(int maxSongs);
+    void createPlaylistByGenre(int maxSongs, int sortType);
 };
 
 void Playlist::searchArtist(string user_artist) {
@@ -214,9 +213,9 @@ bool Playlist::compareSong(const Song& song1, const Song& song2) {
 
     if (this->favoriteArtist != "null" && song1.artist == favoriteArtist && song2.artist != favoriteArtist) {
         // made artist comparisons weighted more!
-        song1HitRate+=20;
+        song1HitRate+=100;
     } else if (this->favoriteArtist != "null" && song1.artist != favoriteArtist && song2.artist == favoriteArtist) {
-        song2HitRate+=20;
+        song2HitRate+=100;
     }
     if (this->favoriteGenre != "null" && find(favoriteGenres.begin(), favoriteGenres.end(), song1.genre)!= favoriteGenres.end()
     && find(favoriteGenres.begin(), favoriteGenres.end(), song2.genre)== favoriteGenres.end() ) {
@@ -228,34 +227,34 @@ bool Playlist::compareSong(const Song& song1, const Song& song2) {
     }
     if (song1.popularity < song2.popularity) {
         // song with the highest popularity gets higher score
-        song2HitRate+=10;
+        song2HitRate+=song2.popularity;
     } else {
-        song1HitRate+=10;
+        song1HitRate+=song1.popularity;
     }
     if (song1.dance_ability < song2.dance_ability) {
-        song2HitRate++;
+        song2HitRate+=song2.dance_ability;
     } else {
-        song1HitRate++;
+        song1HitRate+=song1.dance_ability;
     }
     if (song1.energy < song2.energy) {
-        song2HitRate++;
+        song2HitRate+=song2.energy;
     } else {
-        song1HitRate++;
+        song1HitRate+=song1.energy;
     }
     if (song1.loudness < song2.loudness) {
-        song2HitRate++;
+        song2HitRate+=song2.loudness;
     } else {
-        song1HitRate++;
+        song1HitRate+=song2.loudness;
     }
     if (song1.liveliness < song2.liveliness) {
-        song2HitRate++;
+        song2HitRate+=song2.liveliness;
     } else {
-        song1HitRate++;
+        song1HitRate+=song2.liveliness;
     }
     if (song1.valence < song2.valence) {
-        song2HitRate++;
+        song2HitRate+=song2.valence;
     } else {
-        song1HitRate++;
+        song1HitRate+=song1.valence;
     }
     return song1HitRate > song2HitRate;
 }
@@ -359,14 +358,13 @@ void Playlist::createPlaylistByArtist(int maxSongs, string artist, int sortType)
         }
     }
     int current_size = this->filteredSongs.size();
-    cout << "num artists songs found: " << numArtistSongs << endl;
+    // i fcout << "num artists songs found: " << numArtistSongs << endl;
     // if no songs found, add songs without artist criteria but fit mood from the whole database
     if (filteredSongs.empty() || current_size != maxSongs) {
         for (const Song& song : songDatabase) {
             try {
                 if (uniqueSongs.find(song.song_name) == uniqueSongs.end() &&
-                    song.artist != artist &&
-                    song.popularity >= filteredSongs[0].popularity &&
+                    song.popularity <= filteredSongs[0].popularity + 10 &&
                     song.dance_ability >= stdDanceAbility(lower) && song.dance_ability <= stdDanceAbility(upper) &&
                     song.energy >= stdEnergy(lower) && song.energy <= stdEnergy(upper) &&
                     song.loudness >= stdLoudness(lower)&& song.loudness <= stdLoudness(upper) &&
@@ -379,7 +377,6 @@ void Playlist::createPlaylistByArtist(int maxSongs, string artist, int sortType)
             }
             catch (const invalid_argument& e) {
                 if (uniqueSongs.find(song.song_name) == uniqueSongs.end() &&
-                    song.artist != artist &&
                     song.dance_ability >= stdDanceAbility(lower) && song.dance_ability <= stdDanceAbility(upper) &&
                     song.energy >= stdEnergy(lower) && song.energy <= stdEnergy(upper) &&
                     song.loudness >= stdLoudness(lower)&& song.loudness <= stdLoudness(upper) &&
@@ -403,68 +400,38 @@ void Playlist::createPlaylistByArtist(int maxSongs, string artist, int sortType)
                         userPlaylist.push_back(this->filteredSongs[i]);
                     }
                     printPlaylist();
+                    break;
                 }
             }
         }
     }
-   // cout << "Number of filtered songs to sort: " <<  filteredSongs.size() << endl;
-    // populate userPlaylist with the sorted songs up to maxSongs
     if (sortType == 1) {
+        auto start = high_resolution_clock::now();
         quickSort(this->filteredSongs, 0, filteredSongs.size() - 1);
+        auto stop = high_resolution_clock::now();
+        auto duration = duration_cast<microseconds>(stop - start);
         for (int i = 0; i < min(maxSongs, static_cast<int>(this->filteredSongs.size())); i++) {
             userPlaylist.push_back(this->filteredSongs[i]);
         }
         printPlaylist();
+        cout << "quicksort runtime: ";
+        cout << duration.count() << " microseconds" << endl;
     }
     else if (sortType == 2) {
+        auto start = high_resolution_clock::now();
         mergeSort(this->filteredSongs, 0, filteredSongs.size() - 1);
+        auto stop = high_resolution_clock::now();
+        auto duration = duration_cast<microseconds>(stop - start);
         for (int i = 0; i < min(maxSongs, static_cast<int>(this->filteredSongs.size())); i++) {
             userPlaylist.push_back(this->filteredSongs[i]);
         }
         printPlaylist();
+        cout << "mergesort runtime: ";
+        cout << duration.count() << " microseconds" << endl;
     }
 }
 
-void Playlist::createPlaylistByArtistMergeSort(string mood, int maxSongs, string artist) {
-   // same thing as above but with algorithm 2
-}
-
-//yujin
-void Playlist::createPlaylistByGenreQuickSort(string mood, int maxSongs, string genre) {
-    // search by genre
-    cout << "favoriteGenre " << favoriteGenre << endl;
-    cout << "max songs: " << maxSongs << endl;
-    cout << "songDatabase size: " << songDatabase.size() << endl;
-    this->maxSongs = maxSongs;
-    if(mood == "sad"){
-        if (favoriteGenre == "1"){
-            for (const Song& song : songDatabase){
-                if (song.dance_ability <= 0.2 && song.energy <= 0.2 &&
-                    song.loudness >= -20.0 && song.loudness <= -8.0 &&
-                    song.liveliness >= 0.0 && song.liveliness <= 0.3 &&
-                    song.valence >= 0.0 && song.valence <= 0.4 &&
-                    song.tempo >= 60 && song.tempo <= 100) {
-                    filteredSongs.push_back(song);
-                    uniqueSongs.insert(song.song_name);
-                    numArtistSongs++;
-                }
-            }
-        }
-        int current_size = this->filteredSongs.size();
-        cout << "Filtered Songs Size: " << current_size << endl;
-        quickSort(this->filteredSongs, 0, filteredSongs.size() - 1);
-        for (int i = 0; i < min(maxSongs, static_cast<int>(this->filteredSongs.size())); i++) {
-            userPlaylist.push_back(this->filteredSongs[i]);
-        }
-        cout << "User Playlist: " << endl;
-        for (const auto& song : userPlaylist) {
-            cout << song.song_name << " - " << song.artist << endl;
-        }
-        printPlaylist();
-    }
-}
-
-void Playlist::createPlaylistByGenreMergeSort(int maxSongs) {
+void Playlist::createPlaylistByGenre(int maxSongs, int sortType) {
     string lower = "lower";
     string upper = "upper";
     this->maxSongs = maxSongs;
@@ -481,16 +448,31 @@ void Playlist::createPlaylistByGenreMergeSort(int maxSongs) {
             uniqueSongs.insert(song.song_name);
         }
     }
-    int current_size = this->filteredSongs.size();
     // merge sort the filtered songs found
-    mergeSort(this->filteredSongs, 0, current_size - 1);
-    for (int i = 0; i < min(maxSongs, static_cast<int>(this->filteredSongs.size())); i++) {
-        userPlaylist.push_back(this->filteredSongs[i]);
+    if (sortType == 1) {
+        auto start = high_resolution_clock::now();
+        quickSort(this->filteredSongs, 0, filteredSongs.size() - 1);
+        auto stop = high_resolution_clock::now();
+        auto duration = duration_cast<microseconds>(stop - start);
+        for (int i = 0; i < min(maxSongs, static_cast<int>(this->filteredSongs.size())); i++) {
+            userPlaylist.push_back(this->filteredSongs[i]);
+        }
+        printPlaylist();
+        cout << "quick runtime: ";
+        cout << duration.count()  << " microseconds" << endl;
     }
-
-    // print the sorted playlist
-    printPlaylist();
-
+    else if (sortType == 2) {
+        auto start = high_resolution_clock::now();
+        mergeSort(this->filteredSongs, 0, filteredSongs.size() - 1);
+        auto stop = high_resolution_clock::now();
+        auto duration = duration_cast<microseconds>(stop - start);
+        for (int i = 0; i < min(maxSongs, static_cast<int>(this->filteredSongs.size())); i++) {
+            userPlaylist.push_back(this->filteredSongs[i]);
+        }
+        printPlaylist();
+        cout << "mergesort runtime: ";
+        cout << duration.count()  << " microseconds" << endl;
+    }
 }
 
 double Playlist::stdDanceAbility(string lowerOrUpper) {

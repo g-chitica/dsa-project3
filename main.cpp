@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <chrono>
 #include <sstream>
 #include <unordered_set>
 #include <random>
@@ -9,6 +10,7 @@
 #include "Playlist.h"
 
 using namespace std;
+
 
 // function to read in csv by its delimiters
 // citation: https://stackoverflow.com/questions/1120140/how-can-i-read-and-parse-csv-files-in-c
@@ -136,7 +138,12 @@ int main() {
         int num_songs;
         cout << "How many songs would you like in your playlist?\n";
         cin >> num_songs;
-        MyPlaylist.createPlaylistByGenreMergeSort(num_songs);
+        cout << "Finally, which algorithm would you like to sort the playlist?:\n";
+        cout << "1. Quick Sort\n";
+        cout << "2. Merge Sort \n";
+        int sort_type;
+        cin >> sort_type;
+        MyPlaylist.createPlaylistByGenre(num_songs, sort_type);
     }
     else if (userOption == "2") {
         cout << "Who is your favorite artist?\n";
