@@ -11,8 +11,8 @@
 
 using namespace std;
 
-// commenttttttingggggggggggggggg :)
-// function to read in csv by its delimiters
+
+// function to read in csv by its delimiter
 // citation: https://stackoverflow.com/questions/1120140/how-can-i-read-and-parse-csv-files-in-c
 vector<string> parseInput(const string& line, char delimiter) {
     vector<string> parsedInput;
@@ -98,7 +98,7 @@ int main() {
             MyPlaylist.setMood(determinedMood);
         }
 
-        // if user did not provide vaild input, then reprompt user for input until it's vaild
+        // if user did not provide valid input, then re-prompt user for input until it's valid
         do {
             if (determinedMood.empty()) {
                 cout << "We didn't catch that, please try again. \n";
@@ -160,11 +160,12 @@ int main() {
         cout << "How many songs would you like in your playlist?\n";
         cin >> num_songs;
         cout << "Finally, which algorithm would you like to sort the playlist?:\n";
+        // print statement to easily compare between quick sort and merge sort
         cout << "1. Quick Sort\n";
         cout << "2. Merge Sort \n";
         int sort_type;
         cin >> sort_type;
-        // if user enter invaild input of the options, prompt them to reenter input
+        // if user enter invalid input of the options, prompt them to reenter input
         if (sort_type != 1 && sort_type != 2) {
             cout << "We did not catch that, please reenter \n";
             cin >> sort_type;
@@ -181,17 +182,17 @@ int main() {
         cout << "How many songs would you like in your playlist?\n";
         cin >> num_songs;
         // create playlist!!
+        // print statement to easily compare between quick sort and merge sort
         cout << "Finally, which algorithm would you like to sort the playlist?:\n";
         cout << "1. Quick Sort\n";
         cout << "2. Merge Sort \n";
         int sort_type;
         cin >> sort_type;
-        // if user enter invaild input of the options, prompt them to reenter input
+        // if user enter invalid input of the options, prompt them to reenter input
         if (sort_type != 1 && sort_type != 2) {
             cout << "We did not catch that, please reenter \n";
             cin >> sort_type;
         }
-
         MyPlaylist.createPlaylistByArtist(num_songs, MyPlaylist.getFavoriteArtist(), sort_type);
     }
     else if (userOption == "3") {

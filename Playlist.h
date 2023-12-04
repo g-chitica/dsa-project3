@@ -1,7 +1,7 @@
 using namespace std;
 using namespace std::chrono;
 struct Song {
-    Song() {}
+    Song() {} // default song constructor
     string artist;
     string song_name;
     double popularity;
@@ -16,27 +16,27 @@ struct Song {
          double loudness, double liveliness, double valence, double tempo)
             : artist(artist), song_name(song_name), popularity(popularity), genre(genre),
               dance_ability(dance_ability), energy(energy), loudness(loudness),
-              liveliness(liveliness), valence(valence), tempo(tempo) {}
+              liveliness(liveliness), valence(valence), tempo(tempo) {} // parameterized song constructor with values from csv
 };
 class Playlist {
     string mood;
     string favoriteGenre;
-    vector<string> favoriteGenres;
+    vector<string> favoriteGenres; // holds sub categories of favorite genre for easy access
     string favoriteArtist;
     int maxSongs = 0;
     double numArtistSongs = 0;
-    void searchArtist(string user_artist);
+    void searchArtist(string user_artist); // searches for valid artist in database
     vector<Song> songDatabase; // vector to store all the songs in the csv file as song objects.
     vector<Song> userPlaylist; // vector to store only the user's playlist songs
     vector<Song> filteredSongs;
     unordered_set<string> uniqueSongs;
-    void printPlaylist();
-    bool compareSong(const Song& song1, const Song& song2);
+    void printPlaylist(); // prints playlist
+    bool compareSong(const Song& song1, const Song& song2); // allows for weighted attributes when performing merge/quick sort
     void quickSort(vector<Song>& songs, int low, int high);
     int partition(vector<Song>& songs, int low, int high);
     void merge(vector<Song>& songs, int left, int mid, int right);
     void mergeSort(vector<Song>& songs, int left, int right);
-    double stdDanceAbility(string lowerOrUpper);
+    double stdDanceAbility(string lowerOrUpper); // functions to retrieve the standard lower/upper range of song search depending on user mood
     double stdEnergy(string lowerOrUpper);
     double stdLoudness(string lowerOrUpper);
     double stdLiveliness(string lowerOrUpper);
@@ -82,17 +82,23 @@ public:
         }
 
         file.close();
-    }
+    }  // constructor to initialize the song database vector and other attributes
     void setMood(string user_mood) {
         this->mood = user_mood;
     }
     void setFavoriteArtist(string user_artist) {
+        // sets users favorite artist by first searching through database to see if the artist appears
+        // continues to prompt user for a new artist unless one is found
         searchArtist(user_artist);
-    }
+    } // set favorite artist recursively until one is found
     string getFavoriteArtist() {
         return this->favoriteArtist;
     }
     void setFavoriteGenre(string genreNum) {
+        // the csv file has many genres that fall under an umbrella category of certain genres
+        // this allows a user to still assign their favorite genre to a specific category while
+        // being able to access the other subcategories that fall in them
+        // ex. genre = pop , allows access to pop, power-pop, pop-film
         if (genreNum == "1") {
             this->favoriteGenre = "Hip-Hop";
             favoriteGenres.emplace_back("hip-hop");
@@ -158,15 +164,12 @@ public:
         }
 
     };
-    void createPlaylistByArtist(int maxSongs, string artist, int sortType);
-    void createPlaylistByGenre(int maxSongs, int sortType);
+    void createPlaylistByArtist(int maxSongs, string artist, int sortType); // creates playlist by artist using quick or merge sort
+    void createPlaylistByGenre(int maxSongs, int sortType); // creates playlist by genre using quick or merge sort
 };
 
 void Playlist::searchArtist(string user_artist) {
-
-    //  cout << songDatabase.size() << endl; commented out this line of code because the # of artist is not need yet
     bool artistFound = false;
-
     for (Song &song : songDatabase) {
         if (song.artist == user_artist) {
             artistFound = true;
@@ -257,6 +260,7 @@ bool Playlist::compareSong(const Song& song1, const Song& song2) {
     } else {
         song1HitRate+=song1.valence;
     }
+    // return favors the largest value so that sort is in descending order with higher hit rates first
     return song1HitRate > song2HitRate;
 }
 
@@ -272,11 +276,12 @@ void Playlist::quickSort(vector<Song>& songs, int low, int high) {
 // partition songs based on quick sort hit factors
 // quick sort citation: aman's sorting lecture slides pg. 122
 int Playlist::partition(vector<Song>& songs, int low, int high) {
-    // Select the pivot element
+    // select the pivot element
     Song pivot = songs[high];
     int i = low - 1;
 
     for (int j = low; j < high; j++) {
+        // compare song by hit factor weights
         if (compareSong(songs[j], pivot)) {
             i++;
             swap(songs[i], songs[j]);
@@ -345,6 +350,7 @@ void Playlist::createPlaylistByArtist(int maxSongs, string artist, int sortType)
     string lower = "lower";
     string upper = "upper";
     this->maxSongs = maxSongs;
+    // use range retrieving functions for more flexibility and less redundant code
     for (const Song& song : songDatabase) {
         if (song.artist == artist && (numArtistSongs / maxSongs <= 0.4) &&
             song.dance_ability >= stdDanceAbility(lower) && song.dance_ability <= stdDanceAbility(upper) &&
@@ -359,10 +365,14 @@ void Playlist::createPlaylistByArtist(int maxSongs, string artist, int sortType)
         }
     }
     int current_size = this->filteredSongs.size();
+    // if program cannot find a song by the artist with mood characteristics (Ex. x artist has no sad songs)
+    // it will continue to search through the database except using songs from other arist's that do:
     if (filteredSongs.empty() || current_size != maxSongs) {
         for (const Song& song : songDatabase) {
             try {
                 if (uniqueSongs.find(song.song_name) == uniqueSongs.end() &&
+                // if the playlist had songs by the artist but is still not full find songs of same mood with similar
+                // popularity levels for relevancy
                     song.popularity <= filteredSongs[0].popularity + 10 &&
                     song.dance_ability >= stdDanceAbility(lower) && song.dance_ability <= stdDanceAbility(upper) &&
                     song.energy >= stdEnergy(lower) && song.energy <= stdEnergy(upper) &&
@@ -385,7 +395,7 @@ void Playlist::createPlaylistByArtist(int maxSongs, string artist, int sortType)
                     this->filteredSongs.push_back(song);
                     this->uniqueSongs.insert(song.song_name);
                 }
-                // cout << "Number of filtered songs to sort: " <<  filteredSongs.size() << endl;
+
                 if (sortType == 1) {
                     quickSort(this->filteredSongs, 0, filteredSongs.size() - 1);
                     for (int i = 0; i < min(maxSongs, static_cast<int>(this->filteredSongs.size())); i++) {
@@ -404,6 +414,8 @@ void Playlist::createPlaylistByArtist(int maxSongs, string artist, int sortType)
             }
         }
     }
+    // sort using either quick or merge sort depending on user prompt
+    // print run times of each for seamless comparison of run time :)
     if (sortType == 1) {
         auto start = high_resolution_clock::now();
         quickSort(this->filteredSongs, 0, filteredSongs.size() - 1);
@@ -430,11 +442,11 @@ void Playlist::createPlaylistByArtist(int maxSongs, string artist, int sortType)
     }
 }
 
+// similar to the above function except with using the genre
 void Playlist::createPlaylistByGenre(int maxSongs, int sortType) {
     string lower = "lower";
     string upper = "upper";
     this->maxSongs = maxSongs;
-   // same as above but with alg 2
     for (const Song& song : songDatabase) {
         if (find(favoriteGenres.begin(), favoriteGenres.end(), song.genre)!= favoriteGenres.end() &&
             song.dance_ability >= stdDanceAbility(lower) && song.dance_ability <= stdDanceAbility(upper) &&
