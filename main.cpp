@@ -160,7 +160,6 @@ int main() {
         int sort_type;
         cin >> sort_type;
         MyPlaylist.createPlaylistByArtist(num_songs, MyPlaylist.getFavoriteArtist(), sort_type);
-        // cout << "which algorithm to sort playlist: "
     }
     else if (userOption == "3") {
         return 0;

@@ -34,8 +34,8 @@ class Playlist {
     bool compareSong(const Song& song1, const Song& song2);
     void quickSort(vector<Song>& songs, int low, int high);
     int partition(vector<Song>& songs, int low, int high);
-    void merge(vector<Song>& songs, int low, int mid, int high);
-    void mergeSort(vector<Song>& songs, int low, int high);
+    void merge(vector<Song>& songs, int left, int mid, int right);
+    void mergeSort(vector<Song>& songs, int left, int right);
     double stdDanceAbility(string lowerOrUpper);
     double stdEnergy(string lowerOrUpper);
     double stdLoudness(string lowerOrUpper);
@@ -259,17 +259,19 @@ bool Playlist::compareSong(const Song& song1, const Song& song2) {
     return song1HitRate > song2HitRate;
 }
 
-// custom quicksort algorithm based on weighted factors
+// quick sort citation: aman's sorting lecture slides pg. 122
 void Playlist::quickSort(vector<Song>& songs, int low, int high) {
     if (low < high) {
-        int pivotIndex = partition(songs, low, high);
-        quickSort(songs, low, pivotIndex - 1);
-        quickSort(songs, pivotIndex + 1, high);
+        int pivot = partition(songs, low, high);
+        quickSort(songs, low, pivot - 1);
+        quickSort(songs, pivot + 1, high);
     }
 }
 
 // partition songs based on quick sort hit factors
+// quick sort citation: aman's sorting lecture slides pg. 122
 int Playlist::partition(vector<Song>& songs, int low, int high) {
+    // Select the pivot element
     Song pivot = songs[high];
     int i = low - 1;
 
@@ -282,26 +284,24 @@ int Playlist::partition(vector<Song>& songs, int low, int high) {
     swap(songs[i + 1], songs[high]);
     return i + 1;
 }
-void Playlist::merge(vector<Song>& songs, int low, int mid, int high) {
-    int n1 = mid - low + 1;
-    int n2 = high - mid;
-
-    // create temp arrays w num of values of left or right halves
-    vector<Song> leftSongs(n1);
-    vector<Song> rightSongs(n2);
-
-    // copy data to temporary arrays leftSongs[] and rightSongs[]
+// merge sort citation: aman's sorting lecture slides pg. 90
+void Playlist::merge(vector<Song>& songs, int left, int mid, int right) {
+    int n1 = mid - left + 1;
+    int n2 = right - mid;
+    // create temp vectors w num of values of left or right halves
+    vector<Song> leftSongs(n1), rightSongs(n2);
+    // copy data back to temporary vectors
     for (int i = 0; i < n1; i++) {
-        leftSongs[i] = songs[low + i];
+        leftSongs[i] = songs[left + i];
     }
     for (int j = 0; j < n2; j++) {
         rightSongs[j] = songs[mid + 1 + j];
     }
 
-    // merge the temporary arrays back into songs[low..high]
+    // merge the left and right vectors into vector
     int i = 0;
     int j = 0;
-    int k = low;
+    int k = left;
 
     while (i < n1 && j < n2) {
         if (compareSong(leftSongs[i], rightSongs[j])) {
@@ -326,20 +326,20 @@ void Playlist::merge(vector<Song>& songs, int low, int mid, int high) {
     }
 }
 
-// recursive function to perform merge sort
-void Playlist:: mergeSort(vector<Song>& songs, int low, int high) {
-    if (low < high) {
-        int mid = low + (high - low) / 2;
+// merge sort citation: aman's sorting lecture slides pg. 91
+void Playlist:: mergeSort(vector<Song>& songs, int left, int right) {
+    if (left < right) {
+        int mid = left + (right - left) / 2;
+        // recursively sort for the first and second half of the vectors
+        mergeSort(songs, left, mid);
+        mergeSort(songs, mid + 1, right);
 
-        // recursively sort the first and second halves
-        mergeSort(songs, low, mid);
-        mergeSort(songs, mid + 1, high);
-
-        // merge the sorted halves
-        merge(songs, low, mid, high);
+        // merge the sorted sub-vectors
+        merge(songs, left, mid, right);
     }
 }
 
+// citation for getting time: https://www.geeksforgeeks.org/measure-execution-time-function-cpp/#
 void Playlist::createPlaylistByArtist(int maxSongs, string artist, int sortType) {
     string lower = "lower";
     string upper = "upper";
@@ -358,8 +358,6 @@ void Playlist::createPlaylistByArtist(int maxSongs, string artist, int sortType)
         }
     }
     int current_size = this->filteredSongs.size();
-    // i fcout << "num artists songs found: " << numArtistSongs << endl;
-    // if no songs found, add songs without artist criteria but fit mood from the whole database
     if (filteredSongs.empty() || current_size != maxSongs) {
         for (const Song& song : songDatabase) {
             try {
@@ -489,10 +487,12 @@ double Playlist::stdDanceAbility(string lowerOrUpper) {
         else {return 0.5;}
     }
     if (this->mood == "mad") {
-
+        if (lowerOrUpper == "lower") return 0.6;
+        else {return 0.9;}
     }
     if (this->mood == "energetic"){
-
+        if (lowerOrUpper == "lower") return 0.6;
+        else {return 1.0;}
     }
 }
 
@@ -510,10 +510,12 @@ double Playlist::stdEnergy(string lowerOrUpper) {
         else {return 0.7;}
     }
     if (this->mood == "mad") {
-
+        if (lowerOrUpper == "lower") { return 0.4;}
+        else { return 0.8;}
     }
     if (this->mood == "energetic"){
-
+        if (lowerOrUpper == "lower") { return 0.7;}
+        else { return 1.0;}
     }
 }
 
@@ -531,10 +533,12 @@ double Playlist::stdLoudness(string lowerOrUpper) {
         else {return -6.0;}
     }
     if (this->mood == "mad") {
-
+        if (lowerOrUpper == "lower") return -7.0;
+        else {return 0.0;}
     }
     if (this->mood == "energetic"){
-
+        if (lowerOrUpper == "lower") return -6.0;
+        else {return 0.0;}
     }
 }
 
@@ -553,10 +557,12 @@ double Playlist::stdLiveliness(string lowerOrUpper) {
 
     }
     if (this->mood == "mad") {
-
+        if (lowerOrUpper == "lower") {return 0.1;}
+        else {return 0.4;}
     }
     if (this->mood == "energetic"){
-
+        if (lowerOrUpper == "lower") {return 0.0;}
+        else {return 1.0;}
     }
     return 0;
 }
@@ -575,10 +581,12 @@ double Playlist::stdValence(string lowerOrUpper) {
         else {return 0.6;}
     }
     if (this->mood == "mad") {
-
+        if (lowerOrUpper == "lower") { return 0.5;}
+        else {return 0.8;}
     }
     if (this->mood == "energetic"){
-
+        if (lowerOrUpper == "lower") { return 0.6;}
+        else {return 1.0;}
     }
 }
 
@@ -596,10 +604,12 @@ double Playlist::stdTempo(string lowerOrUpper) {
         else {return 100.0;}
     }
     if (this->mood == "mad") {
-
+        if (lowerOrUpper == "lower") {return 60.0;}
+        else {return 90.0;}
     }
     if (this->mood == "energetic"){
-
+        if (lowerOrUpper == "lower") { return 110.0;}
+        else {return 220.0;}
     }
     return 0;
 }
