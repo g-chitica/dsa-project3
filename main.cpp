@@ -97,6 +97,7 @@ int main() {
             cout << "We think your mood is... " << determinedMood << "...\n";
             MyPlaylist.setMood(determinedMood);
         }
+
         // if user did not provide vaild input, then reprompt user for input until it's vaild
         do {
             if (determinedMood.empty()) {
