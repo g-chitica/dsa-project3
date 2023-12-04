@@ -96,7 +96,6 @@ int main() {
             cout << "We think your mood is... " << determinedMood << "...\n";
             MyPlaylist.setMood(determinedMood);
         }
-
         // if user did not provide vaild input, then reprompt user for input until it's vaild
         do {
             if (determinedMood.empty()) {
@@ -114,7 +113,6 @@ int main() {
                 }
             }
         } while (determinedMood.empty());
-
 
         // ask the user if the determined mood is correct
         string userResponse;
@@ -164,7 +162,6 @@ int main() {
         cout << "2. Merge Sort \n";
         int sort_type;
         cin >> sort_type;
-
         // if user enter invaild input of the options, prompt them to reenter input
         if (sort_type != 1 && sort_type != 2) {
             cout << "We did not catch that, please reenter \n";
@@ -187,7 +184,6 @@ int main() {
         cout << "2. Merge Sort \n";
         int sort_type;
         cin >> sort_type;
-
         // if user enter invaild input of the options, prompt them to reenter input
         if (sort_type != 1 && sort_type != 2) {
             cout << "We did not catch that, please reenter \n";
